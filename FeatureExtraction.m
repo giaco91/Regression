@@ -1,4 +1,4 @@
-function [X I_out] = FeatureExtraction(filename,interval,y,I_tr,N)
+function [X I_out] = FeatureExtraction(filename,interval,y,I_tr,N,dl)
     F4=[];
     X=[];
     for i=interval(1):interval(2) %max=278
@@ -10,7 +10,6 @@ function [X I_out] = FeatureExtraction(filename,interval,y,I_tr,N)
         f1=mean(mean(mean(Data.img,1),2),3);
         Xi=[Xi f1];      
         % mean over neighbor boxes
-        dl=40;
         f4=mean(mean(mean(Data.img(1:1+dl,1:1+dl,1:1+dl),1),2),3);
         for k1=1+dl:dl:size(Data.img,1)-dl
             for k2=1+dl:dl:size(Data.img,2)-dl

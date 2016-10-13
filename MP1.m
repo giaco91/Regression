@@ -1,14 +1,15 @@
 clear
 
 %Hyperparameter
-train_size=0.4; %Anzahl samples, max 278
-val_size=0.2;
+train_size=0.85; %Anzahl samples, max 278
+val_size=0.15;
 lambda=0.25;
 loop_over_lambda=1;
 lambda_max=5;
 loop_over_complexity=1;
 Nmin=60;
 Nmax=75;
+dl=40;
 submission=0;%1 for writing submissionfile
 
 if val_size+train_size>1
@@ -31,8 +32,8 @@ end
 %Read in
 y=csvread('targets.csv');%size 278x1
 
-train_set=[1,floor(length(y)*train_size)];%sampleinterval 
-val_set = [train_set(2)+1,train_set(2)+1+floor(size(y)*val_size)];
+train_set=[1,floor(length(y)*train_size)];%sampleinterval
+val_set = [train_set(2)+1,train_set(2)+1+floor(length(y)*val_size)];
 test_set= [1 138];
 
 y_train=y(train_set(1):train_set(2),:);
@@ -44,8 +45,8 @@ Losses_val=[];
 for i=1:loop_over_lambda
 for N=Ns
     %featureextraction
-    [X_train I_tr]=FeatureExtraction('train_',train_set,y_train,0,N);
-    [X_val bla]=FeatureExtraction('train_',val_set,0,I_tr,N);
+    [X_train I_tr]=FeatureExtraction('train_',train_set,y_train,0,N,dl);
+    [X_val bla]=FeatureExtraction('train_',val_set,0,I_tr,N,dl);
     
     %regression
     [betahat y_mean_train Loss_train]=Regression(X_train,y_train,lambda(i));
