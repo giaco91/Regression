@@ -1,5 +1,6 @@
-function [X I_out1] = FeatureExtraction(filename,interval,y,I_tr1,N)
+function [X I_out] = FeatureExtraction(filename,interval,y,I_tr,N)
     F4=[];
+    X=[];
     for i=interval(1):interval(2) %max=278
         j=num2str(i);    
         train_j=strcat(filename,j,'.nii');   
@@ -15,42 +16,37 @@ function [X I_out1] = FeatureExtraction(filename,interval,y,I_tr1,N)
             for k2=1+dl:dl:size(Data.img,2)-dl
               for k3=1+dl:dl:size(Data.img,3)-dl
                     f4=[f4 mean(mean(mean(Data.img(k1:k1+dl,k2:k2+dl,k3:k3+dl),1),2),3)];
-                end
+              end
             end
         end
         F4=[F4;f4];
-
-        %save in Feature-Sample matrix
-        if i==interval(1)
-            X=Xi;
-        else
-            X=[X;Xi];
-        end
+        X=[X;Xi];
     end
-    
+  
     %Max correlation
     size_F4=size(F4);
     if N>size(F4,2)
         N=size(F4,2);
     end
-    if I_tr1==0
-        corr1=[];
+    if I_tr==0
+        corr=[];
         for i=1:size(F4,2)
-            C1=cov(F4(:,i),y);
-            corr1=[corr1 C1(2)];
+            size(F4,1)
+            length(y)
+            C=cov(F4(:,i),y);
+            corr=[corr abs(C(2))];
         end   
-        sorted_corr1=sort(corr1);
+        sorted_corr=sort(corr);
         for i=0:N-1
-           [~, I1]=max(sorted_corr1(end-i)==corr1);
-           [~, I11]=max(sorted_corr1(i+1)==corr1);
-            X=[X F4(:,I1).*F4(:,I11)];
-            I_out1(i+1)=I1;       
+           [~, I]=max(sorted_corr(end-i)==corr);
+            X=[X F4(:,I)];
+            I_out(i+1)=I;       
         end
     else
         for i=0:N-1
-            X=[X F4(:,I_tr1(i+1))];
+            X=[X F4(:,I_tr(i+1))];
         end
-        I_out1=I_tr1;
+        I_out=I_tr;
     end
 NumberOfFeatures=size(X,2)
 end
